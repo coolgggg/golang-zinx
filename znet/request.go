@@ -1,6 +1,6 @@
 package znet
 
-import "github.com/aceld/golang-zinx/ziface"
+import "golang-zinx/ziface"
 
 type Request struct {
 	//已经和客户端建立的链接

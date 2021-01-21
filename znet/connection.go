@@ -3,8 +3,8 @@ package znet
 import (
 	"errors"
 	"fmt"
-	"github.com/aceld/golang-zinx/utils"
-	"github.com/aceld/golang-zinx/ziface"
+	"golang-zinx/utils"
+	"golang-zinx/ziface"
 	"io"
 	"net"
 	"sync"

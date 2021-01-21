@@ -2,8 +2,8 @@ package znet
 
 import (
 	"fmt"
-	"github.com/aceld/golang-zinx/utils"
-	"github.com/aceld/golang-zinx/ziface"
+	"golang-zinx/utils"
+	"golang-zinx/ziface"
 	"strconv"
 )
 

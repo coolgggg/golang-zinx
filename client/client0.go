@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/aceld/golang-zinx/znet"
+	"golang-zinx/znet"
 	"io"
 	"net"
 	"time"

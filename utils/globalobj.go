@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/aceld/golang-zinx/ziface"
+	"golang-zinx/ziface"
 	"io/ioutil"
 )
 

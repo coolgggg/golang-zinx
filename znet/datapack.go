@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/aceld/golang-zinx/utils"
-	"github.com/aceld/golang-zinx/ziface"
+	"golang-zinx/utils"
+	"golang-zinx/ziface"
 )
 
 //封包、拆包的具体模块

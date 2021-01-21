@@ -1,6 +1,6 @@
 package znet
 
-import "github.com/aceld/golang-zinx/ziface"
+import "golang-zinx/ziface"
 
 type BaseRouter struct {
 }

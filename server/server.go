@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/aceld/golang-zinx/ziface"
-	"github.com/aceld/golang-zinx/znet"
+	"golang-zinx/ziface"
+	"golang-zinx/znet"
 )
 
 type PingRouter struct {
