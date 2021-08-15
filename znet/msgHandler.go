@@ -34,6 +34,7 @@ func (mh *MsgHandle) DoMsgHandler(request ziface.IRequest) {
 	handler, ok := mh.Apis[request.GetMsgId()]
 	if !ok {
 		fmt.Println("api msgId=", request.GetMsgId(), "is not found, need register")
+		return
 	}
 
 	//根据msg id调度对应的router业务

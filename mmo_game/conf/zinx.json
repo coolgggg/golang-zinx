@@ -1,6 +1,6 @@
 {
-  "Name": "MMO Game Zinx",
-  "Version": "V1.0 now",
+  "Name": "MMO Game Zinx (conf)",
+  "Version": "V1.0 mmo",
   "Host": "0.0.0.0",
   "TcpPort": 8999,
   "MaxConn": 3000,

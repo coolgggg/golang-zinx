@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"golang-zinx/mmo_game/apis"
 	"golang-zinx/mmo_game/core"
 	"golang-zinx/ziface"
 	"golang-zinx/znet"
@@ -15,6 +16,7 @@ func main() {
 	s.SetOnConnStart(OnConnectionAdd)
 
 	//注册一些路由业务
+	s.AddRouter(2, &apis.WorldChatApi{})
 
 	s.Server()
 }
@@ -29,6 +31,12 @@ func OnConnectionAdd(conn ziface.IConnection) {
 
 	//给客户端发送msg id：200 的消息，同步当前位置给客户端
 	player.BroadCastStartPosition()
+
+	//将当前新上线的玩家添加到world mgr
+	core.WorldMgrObj.AddPlayer(player)
+
+	//将该连接绑定一个pid
+	conn.SetProperty("pid", player.Pid)
 
 	fmt.Println("====>player pid =", player.Pid, " is arrived <====")
 }
