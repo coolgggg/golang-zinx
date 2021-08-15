@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"golang-zinx/ziface"
 	"io/ioutil"
+	"os"
 )
 
 //存储一切有关zinx框架的全局参数，供其他模块使用
@@ -16,6 +17,8 @@ type GlobalObj struct {
 	TcpPort   int
 	Name      string
 
+	ConfFilePath string
+
 	//zinx
 	Version          string
 	MaxConn          int    //当前服务器允许的最大连接数
@@ -27,9 +30,27 @@ type GlobalObj struct {
 //定义一个全局的对外的global obj
 var GlobalObject *GlobalObj
 
+//判断一个文件是否存在
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
 //从zinx.json 去加载用于自定义的参数
 func (g *GlobalObj) Reload() {
-	data, err := ioutil.ReadFile("../conf/zinx.json")
+	if confFileExists, _ := PathExists(g.ConfFilePath); confFileExists != true {
+		//fmt.Println("Config File ", g.ConfFilePath , " is not exist!!")
+		return
+	}
+
+	data, err := ioutil.ReadFile(g.ConfFilePath)
+
 	if err != nil {
 		//fmt.Println("read config json err")
 		panic(err)
@@ -49,6 +70,7 @@ func init() {
 		Version:          "V0.6",
 		TcpPort:          8999,
 		Host:             "0.0.0.0",
+		ConfFilePath:     "conf/zinx.json",
 		MaxConn:          1000,
 		MaxPackageSize:   4096,
 		WorkerPoolSize:   10,
