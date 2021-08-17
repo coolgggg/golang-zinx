@@ -214,3 +214,22 @@ func (p *Player) GetSurroundingPlayers() []*Player {
 
 	return players
 }
+
+//玩家下线
+func (p *Player) Offline() {
+	//得到当前玩家周边的九宫格内的所有玩家
+	players := p.GetSurroundingPlayers()
+
+	//给周边玩家广播 msg id 201消息
+	proto_msg := &pb.SyncPid{
+		Pid: p.Pid,
+	}
+
+	for _, player := range players {
+		player.SendMsg(201, proto_msg)
+	}
+
+	//将当前玩家从世界管理器删除，将当前玩家从AOI管理器中删除
+	WorldMgrObj.AoiMgr.RemoveFromGridByPos(int(p.Pid), p.X, p.Z)
+	WorldMgrObj.RemovePlayerByPid(p.Pid)
+}

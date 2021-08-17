@@ -44,3 +44,15 @@ func OnConnectionAdd(conn ziface.IConnection) {
 
 	fmt.Println("====>player pid =", player.Pid, " is arrived <====")
 }
+
+//给当前链接断开之前触发的hook钩子函数
+func OnConnectionLost(conn ziface.IConnection) {
+	//通过属性拿pid、信息
+	pid, _ := conn.GetProperty("pid")
+	player := core.WorldMgrObj.GetPlayerByPid(pid.(int32))
+
+	//在连接断开之前处理玩家下线业务
+	player.Offline()
+
+	fmt.Println("===> player pid =", pid, "offline ... ")
+}

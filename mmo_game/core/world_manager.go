@@ -37,7 +37,7 @@ func (wm *WorldManager) AddPlayer(player *Player) {
 }
 
 //从玩家信息表中移除一个玩家
-func (wm *WorldManager) RemovePlayer(pid int32) {
+func (wm *WorldManager) RemovePlayerByPid(pid int32) {
 	//得到当前玩家
 	player := wm.Players[pid]
 
