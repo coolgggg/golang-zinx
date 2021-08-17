@@ -17,6 +17,7 @@ func main() {
 
 	//注册一些路由业务
 	s.AddRouter(2, &apis.WorldChatApi{})
+	s.AddRouter(3, &apis.MoveApi{})
 
 	s.Server()
 }
@@ -37,6 +38,9 @@ func OnConnectionAdd(conn ziface.IConnection) {
 
 	//将该连接绑定一个pid
 	conn.SetProperty("pid", player.Pid)
+
+	//同步周边玩家，告知他们当前玩家已经上线，广播当前玩家的消信息
+	player.SyncSurrounding()
 
 	fmt.Println("====>player pid =", player.Pid, " is arrived <====")
 }

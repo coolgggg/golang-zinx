@@ -19,6 +19,8 @@ type Player struct {
 	V    float32            //旋转0-360角度
 }
 
+//tp1 世界聊天， tp2坐标， tp3 动作， tp4 移动之后的坐标信息更新
+
 //player id 生成器
 var PidGen int32 = 1  //用来生产玩家ID的计数器
 var IdLock sync.Mutex //保护PidGen的
@@ -113,4 +115,102 @@ func (p *Player) Talk(content string) {
 		player.SendMsg(200, proto_msg)
 	}
 
+}
+
+//同步玩家上线的位置信息
+func (p *Player) SyncSurrounding() {
+	//获取当前玩家周围的玩家有哪些
+	pids := WorldMgrObj.AoiMgr.GetPidsByPos(p.X, p.Z)
+	players := make([]*Player, 0, len(pids))
+	for _, pid := range pids {
+		players = append(players, WorldMgrObj.GetPlayerByPid(int32(pid)))
+	}
+
+	//将当前玩家的位置信息通过 msg id 200 发送给周围玩家（让其他玩家看到自己）
+	proto_msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  2, //tp2 代表广播坐标
+		Data: &pb.BroadCast_P{
+			P: &pb.Position{
+				X: p.X,
+				Y: p.Y,
+				Z: p.Z,
+				V: p.V,
+			},
+		},
+	}
+	for _, player := range players {
+		player.SendMsg(200, proto_msg)
+	}
+
+	//将周围的全部玩家位置信息 msg id 202 发送给当前玩家的客户端（让自己看到其他玩家）
+	//制作一个pb.Player slice
+	players_proto_msg := make([]*pb.Player, 0, len(players))
+	for _, player := range players {
+		//制作一个 message Player
+		p := &pb.Player{
+			Pid: player.Pid,
+			P: &pb.Position{
+				X: player.X,
+				Y: player.Y,
+				Z: player.Z,
+				V: player.V,
+			},
+		}
+		players_proto_msg = append(players_proto_msg, p)
+	}
+
+	//封装 SyncPlayers protobuf 数据
+	SyncPlayers_proto_msg := &pb.SyncPlayers{
+		Ps: players_proto_msg[:],
+	}
+	//发送
+	p.SendMsg(202, SyncPlayers_proto_msg)
+
+}
+
+//广播当前玩家的位置移动信息
+func (p *Player) UpdatePos(x, y, z, v float32) {
+	//更新当前玩家player对象的坐标
+	p.X = x
+	p.Y = y
+	p.Z = z
+	p.V = v
+
+	//组建广播proto协议 msg id 200，tp=4
+	proto_msg := &pb.BroadCast{
+		Pid: p.Pid,
+		Tp:  4,
+		Data: &pb.BroadCast_P{
+			P: &pb.Position{
+				X: p.X,
+				Y: p.Y,
+				Z: p.Z,
+				V: p.V,
+			},
+		},
+	}
+
+	//获取当前玩家的周边玩家AOI九宫格之内的玩家
+	players := p.GetSurroundingPlayers()
+
+	//一次给每个玩家对应的客户端发送当前玩家的位置更新信息
+	for _, player := range players {
+		player.SendMsg(200, proto_msg)
+	}
+}
+
+//获取当前玩家的周边玩家AOI九宫格之内的玩家
+func (p *Player) GetSurroundingPlayers() []*Player {
+	//得到周边玩家pid
+	pids := WorldMgrObj.AoiMgr.GetPidsByPos(p.X, p.Z)
+
+	//将所有的pid对应的player放到players切片中
+	players := make([]*Player, 0, len(pids))
+
+	for _, pid := range pids {
+		players = append(players, WorldMgrObj.GetPlayerByPid(int32(pid)))
+	}
+
+	return players
 }
